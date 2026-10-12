@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import type { PointerEvent } from 'react'
 import type { ControlAction } from '@/lib/protocol'
 
@@ -16,6 +16,14 @@ export function TrackpadControls({
 }: TrackpadControlsProps) {
   const trackpadRef = useRef<HTMLDivElement>(null)
   const lastPositionRef = useRef<{ x: number; y: number } | null>(null)
+  const pendingMovementRef = useRef({ x: 0, y: 0 })
+  const frameRef = useRef<number | null>(null)
+
+  useEffect(() => () => {
+    if (frameRef.current !== null) {
+      window.cancelAnimationFrame(frameRef.current)
+    }
+  }, [])
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
     if (disabled) return
@@ -23,8 +31,6 @@ export function TrackpadControls({
     const previous = lastPositionRef.current
     lastPositionRef.current = { x: event.clientX, y: event.clientY }
 
-    // Mouse events already expose the delta, including on the first move into
-    // the pad. Touch events need to be measured from the last pointer position.
     const x = event.pointerType === 'mouse'
       ? event.movementX
       : previous ? event.clientX - previous.x : 0
@@ -34,9 +40,17 @@ export function TrackpadControls({
 
     if (x === 0 && y === 0) return
 
-    onCommand('track_pad', {
-      x,
-      y,
+    pendingMovementRef.current.x += x
+    pendingMovementRef.current.y += y
+
+    if (frameRef.current !== null) return
+    frameRef.current = window.requestAnimationFrame(() => {
+      frameRef.current = null
+      const movement = pendingMovementRef.current
+      pendingMovementRef.current = { x: 0, y: 0 }
+      if (movement.x !== 0 || movement.y !== 0) {
+        onCommand('track_pad', movement)
+      }
     })
   }
 
