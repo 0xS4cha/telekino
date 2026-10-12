@@ -177,7 +177,7 @@ export function TrackpadControls({ disabled, onCommand }: TrackpadControlsProps)
           <div className="absolute left-0 top-1/2 h-px w-full bg-border" />
           <div className="absolute inset-0 flex items-center justify-center">
             <span className="rounded-full border border-border bg-background/80 px-3 py-1 text-center text-xs text-muted-foreground">
-              {disabled ? 'Désactivé' : 'Glisser · toucher pour cliquer · deux doigts pour défiler'}
+              {disabled ? 'Desactivate' : 'Slide · Touch to click · 2 fingers to scroll'}
             </span>
           </div>
         </div>
