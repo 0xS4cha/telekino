@@ -94,7 +94,7 @@ export function TrackpadControls({
 
           <div className="absolute inset-0 flex items-center justify-center">
             <span className="rounded-full border border-border bg-background/80 px-3 py-1 text-xs text-muted-foreground">
-              {disabled ? 'Désactivé' : 'Déplacez le curseur'}
+              {disabled ? 'Desactivate' : 'Move the cursor'}
             </span>
           </div>
         </div>
