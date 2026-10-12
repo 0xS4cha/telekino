@@ -18,6 +18,9 @@ export type ControlAction =
   | 'left_arrow'
   | 'right_arrow'
   | 'track_pad'
+  | 'click'
+  | 'right_click'
+  | 'scroll'
 
 export type ClientMessage =
   | { type: 'auth'; device_name: string; token: string | null }
@@ -57,6 +60,6 @@ export function createAuthMessage(deviceName: string, token: string | null): Cli
   return { type: 'auth', device_name: deviceName, token }
 }
 
-export function createCommandMessage(action: ControlAction, args: Record<string, number>): ClientMessage {
-  return { type: 'command', action: { action }, args: args }
+export function createCommandMessage(action: ControlAction, args: Record<string, number> = {}): ClientMessage {
+  return { type: 'command', action: { action }, args }
 }

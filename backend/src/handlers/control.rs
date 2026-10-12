@@ -1,5 +1,5 @@
 use axum::http::StatusCode;
-use enigo::{Coordinate, Direction, Enigo, Key, Keyboard, Mouse, Settings};
+use enigo::{Axis, Button, Coordinate, Direction, Enigo, Key, Keyboard, Mouse, Settings};
 use std::collections::HashMap;
 
 use crate::models::control::ControlCommand;
@@ -32,6 +32,39 @@ pub async fn execute_control(
                 }
             }
 
+            ControlCommand::Click => {
+                enigo.button(Button::Left, Direction::Click).map_err(|e| {
+                    (
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        format!("Failed to click mouse: {}", e),
+                    )
+                })?;
+            }
+
+            ControlCommand::RightClick => {
+                enigo.button(Button::Right, Direction::Click).map_err(|e| {
+                    (
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        format!("Failed to click mouse: {}", e),
+                    )
+                })?;
+            }
+
+            ControlCommand::Scroll => {
+                for (key, axis) in [("y", Axis::Vertical), ("x", Axis::Horizontal)] {
+                    let delta = args.get(key).copied().unwrap_or(0.0).clamp(-20.0, 20.0);
+                    let ticks = delta.round() as i32;
+                    if ticks != 0 {
+                        enigo.scroll(ticks, axis).map_err(|e| {
+                            (
+                                StatusCode::INTERNAL_SERVER_ERROR,
+                                format!("Failed to scroll: {}", e),
+                            )
+                        })?;
+                    }
+                }
+            }
+
             ControlCommand::PlayPause
             | ControlCommand::NextTrack
             | ControlCommand::PreviousTrack
@@ -50,6 +83,7 @@ pub async fn execute_control(
                     ControlCommand::LeftArrow => Key::LeftArrow,
                     ControlCommand::RightArrow => Key::RightArrow,
                     ControlCommand::Trackpad => unreachable!(),
+                    ControlCommand::Click | ControlCommand::RightClick | ControlCommand::Scroll => unreachable!(),
                 };
 
                 enigo.key(key, Direction::Click).map_err(|e| {
