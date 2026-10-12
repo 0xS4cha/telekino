@@ -11,6 +11,8 @@ pub enum ControlCommand {
     VolumeMute,
     LeftArrow,
     RightArrow,
+    #[serde(rename = "track_pad", alias = "trackpad")]
+    Trackpad
 }
 
 impl ControlCommand {
@@ -24,6 +26,7 @@ impl ControlCommand {
             Self::VolumeMute => "volume_mute",
             Self::LeftArrow => "left_arrow",
             Self::RightArrow => "right_arrow",
+            Self::Trackpad => "track_pad"
         }
     }
 }

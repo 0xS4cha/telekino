@@ -3,10 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { MediaControls } from '@/components/MediaControls'
 import { NavigationControls } from '@/components/NavigationControls'
 import { VolumeControls } from '@/components/VolumeControls'
+import { TrackpadControls } from '@/components/TrackpadControls'
 import type { ControlAction } from '@/lib/protocol'
 
 type RemoteControlsProps = {
-  onCommand: (action: ControlAction) => void
+  onCommand: (action: ControlAction, args: Record<string, number>) => void
   connected: boolean
 }
 
@@ -33,6 +34,7 @@ export function RemoteControls({ onCommand, connected }: RemoteControlsProps) {
         <div className="h-px bg-border" />
         <VolumeControls disabled={false} onCommand={onCommand} />
         <NavigationControls disabled={false} onCommand={onCommand} />
+        <TrackpadControls disabled={!connected} onCommand={onCommand} />
       </CardContent>
     </Card>
   )

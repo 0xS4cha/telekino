@@ -106,10 +106,10 @@ export function useRemote() {
 		})
 	}, [])
 
-	const sendCommand = useCallback((action: ControlAction) => {
+	const sendCommand = useCallback((action: ControlAction, args: Record<string, number>) => {
 		const socket = socketRef.current
 		if (status !== 'connected' || socket?.readyState !== WebSocket.OPEN) return false
-		socket.send(JSON.stringify(createCommandMessage(action)))
+		socket.send(JSON.stringify(createCommandMessage(action, args)))
 		return true
 	}, [status])
 
