@@ -17,10 +17,14 @@ export type ControlAction =
   | 'volume_mute'
   | 'left_arrow'
   | 'right_arrow'
+  | 'track_pad'
+  | 'click'
+  | 'right_click'
+  | 'scroll'
 
 export type ClientMessage =
   | { type: 'auth'; device_name: string; token: string | null }
-  | { type: 'command'; action: { action: ControlAction } }
+  | { type: 'command'; action: { action: ControlAction }, args: Record<string, number> }
 
 export type ServerMessage =
   | { type: 'auth_pending' }
@@ -56,6 +60,6 @@ export function createAuthMessage(deviceName: string, token: string | null): Cli
   return { type: 'auth', device_name: deviceName, token }
 }
 
-export function createCommandMessage(action: ControlAction): ClientMessage {
-  return { type: 'command', action: { action } }
+export function createCommandMessage(action: ControlAction, args: Record<string, number> = {}): ClientMessage {
+  return { type: 'command', action: { action }, args }
 }

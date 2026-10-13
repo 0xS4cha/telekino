@@ -101,10 +101,10 @@ async fn handle_socket(mut socket: WebSocket, state: Arc<AppState>) {
         };
 
         match serde_json::from_str(&message) {
-            Ok(ClientMessage::Command { action }) => {
+            Ok(ClientMessage::Command { action, args }) => {
                 let action_name = action.name().to_string();
                 println!("Executing command {}", action_name);
-                match execute_control(action).await {
+                match execute_control(action, args).await {
                     Ok(()) => {
                         println!("Command executed successfully: {}", action_name);
                         if send_message(
